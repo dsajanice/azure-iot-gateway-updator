@@ -3,28 +3,28 @@
     using System;
     using System.Threading.Tasks;
     using Microsoft.Azure.Devices.Client;
+    using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.Configuration.Json;
+    using Microsoft.Extensions.Configuration.EnvironmentVariables;
 
-    // Device side updator opens a device stream to IoTHub and waits for the service to connect to it
-    // After the service connects it opens a connection to the SSH daemon running on the device and tunnels traffic to it
     class Program
     {
+        const string settings_file = "appsettings.json";
         static Task Main(string[] args)
         {
             Console.WriteLine("Gateway updator starting..");
             Console.WriteLine("Gateway updator running..");
-            Console.CancelKeyPress += delegate {
+            Console.CancelKeyPress += delegate
+            {
                 Console.WriteLine("Gateway updator exiting");
             };
-
-            // TODO: auto format extension
-            IConfiguration config = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", optional:true, reloadOnChange:true)
-            .Build();
-      Console.WriteLine($"Contents of Message Property: {message}");
-            // Open a connection to IoTHub streaming endpoint
-
-            while(true);
+            IConfigurationRoot configuration = new ConfigurationBuilder()
+                    .AddJsonFile(settings_file)
+                    .AddEnvironmentVariables()
+                    .Build();
+            string message = configuration.GetValue<string>("Message");
+            Console.WriteLine(message);
+            while (true) ;
         }
     }
 }
