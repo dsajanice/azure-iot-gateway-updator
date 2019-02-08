@@ -10,6 +10,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0"/>
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.0"/>
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="2.2.0"/>
+    <PackageReference Include="Microsoft.Azure.Devices.Shared" Version="1.25.0-preview-001"/>
   </ItemGroup>
   <ItemGroup>
     <None Update="appsettings.json">
