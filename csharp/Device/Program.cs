@@ -53,6 +53,8 @@
                     Console.WriteLine($"Before: {DateTime.Now.ToString()}");
                     DeviceStreamRequest streamRequest = await deviceClient.WaitForDeviceStreamRequestAsync();
                     Console.WriteLine("Received stream request");
+                    if (streamRequest != null)
+                    {
                     await deviceClient.AcceptDeviceStreamRequestAsync(streamRequest);
                     using (ClientWebSocket webSocket = await GetStreamingClientAsync(streamRequest.Url, streamRequest.AuthorizationToken))
                     {
@@ -75,6 +77,7 @@
                     }
 
                         await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, String.Empty, CancellationToken.None);
+                    }
                     }
                 } 
                 catch (Exception e)
