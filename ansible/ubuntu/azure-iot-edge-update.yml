@@ -1,0 +1,64 @@
+---
+- hosts: devices
+  tasks:
+
+  - name: Get current version of Azure IoT Edge runtime
+    azure_rm_iotedge:
+      version: yes
+    register: version_info
+
+  - name: Print current version of Azure IoT Edge runtime
+    debug:
+      var: version_info.version
+
+  - name: Update Azure IoT Edge runtime components
+    azure_rm_iotedge:
+      update_runtime:
+        version: "latest"
+    when: version_info.version == "1.0.6"
+    register: update
+    become: yes
+    become_method: sudo 
+
+  - name: Get new Azure IoT Edge runtime version
+    azure_rm_iotedge:
+      version: yes
+    when: update.changed == True
+    register: new_version
+
+  - name: Print new Azure IoT Edge runtime version
+    debug:
+      var: new_version.version
+    when: update.changed == True
+
+  - name: Remove Azure IoT edgeAgent container 
+    docker_container:
+      name: edgeAgent
+      state: absent
+      force_kill: yes
+    when: update.changed == True
+
+  - name: Remove Azure IoT edgeAgent image
+    docker_image:
+      name: mcr.microsoft.com/azureiotedge-agent
+      state: absent
+      force: yes
+      tag: 1.0
+    when: update.changed == True
+
+  - name: Remove Azure IoT edgeHub container 
+    docker_container:
+      name: edgeHub
+      state: absent
+      force_kill: yes
+    when: update.changed == True
+
+  - name: Remove Azure IoT edgeAgent image
+    docker_image:
+      name: mcr.microsoft.com/azureiotedge-hub
+      state: absent
+      force: yes
+      tag: 1.0
+    when: update.changed == True
+
+
