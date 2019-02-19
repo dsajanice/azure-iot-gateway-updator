@@ -15,7 +15,7 @@
     azure_rm_iotedge:
       update_runtime:
         version: "#{azure_iot_edge_desired_version}#-1"
-    when: version_info.version != "#{edge_desired_version}#"
+    when: version_info.version != "#{azure_iot_edge_desired_version}#"
     register: update
     become: yes
     become_method: sudo 
