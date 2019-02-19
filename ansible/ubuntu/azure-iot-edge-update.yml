@@ -14,8 +14,8 @@
   - name: Update Azure IoT Edge runtime components
     azure_rm_iotedge:
       update_runtime:
-        version: #{edge_desired_version}#
-    when: version_info.version != #{edge_desired_version}#
+        version: "#{edge_desired_version}#"
+    when: version_info.version != "#{edge_desired_version}#"
     register: update
     become: yes
     become_method: sudo 
