@@ -154,8 +154,23 @@ cp lib/ansible/modules/cloud/azure/azure_rm_iotedge.py ~/.ansible/plugins/module
 
 After installing the experimental Azure IoT Edge Ansible module locally on the control VM, the [playbook](ansible/ubuntu/azure-iot-edge-update.yml) in this repo can be run to update the Azure IoT Edge runtime components on the remote device.
 
-The playbook has a variable, azure_iot_edge_desired_version, that a user can set to the desired version of Azure IoT Edge on the device. The playbook will read the current version on the device, update the runtime components if the current version doesn't match the user-provided desired version, delete the Edge Hub and Edge Agent containers and container images and restart the Azure IoT Edge runtime components. 
+The playbook has a token, **#{azure_iot_edge_desired_version}#-1**, that a user can replace to the desired version of Azure IoT Edge on the device. For example:
+
+```
+- name: Update Azure IoT Edge runtime components
+    azure_rm_iotedge:
+      update_runtime:
+        version: "1.0.6.1-1"
+    when: version_info.version != "1.0.6.1"
+    register: update
+    become: yes
+    become_method: sudo
+```
+
+The playbook will read the current version on the device, update the runtime components if the current version doesn't match the user-provided desired version, delete the Edge Hub and Edge Agent containers and container images and restart the Azure IoT Edge runtime components. 
 
 ### 5. Create an Azure DevOps release pipeline to kick off the Ansible playbook on the control VM
 
 Create an Azure Dev Ops Ansible task that points at the control VM, which already has a preconfigured inventory list, to run the [playbook](ansible/ubuntu/azure-iot-edge-update.yml) in this repo. To get access to an example repo with a sample pipeline, email jadsa@microsoft.com and request access.
+
+To set the desired version in the Ansible playbook, use the 'Replace Tokens' Azure Dev Ops task to replace **azure_iot_edge_desired_version** with the desired version.
